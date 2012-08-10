@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Open Food Facts</title>
+<meta name="viewport_notactive" content="width=320; user-scalable=no" />
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+<script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
+<script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>      
+
+<script type="text/javascript" charset="utf-8">
+    
+    function init(){
+        console.log("GOT AN ONLOAD!!!")
+        document.addEventListener("touchmove", preventBehavior, false);
+        document.addEventListener("deviceready", deviceInfo, true);     
+    }
+    
+    var preventBehavior = function(e) { 
+      e.preventDefault(); 
+    };
+      
+    var deviceInfo = function(){      
+      console.log("In deviceInfo!");
+      document.getElementById("platform").innerHTML = device.platform;
+      document.getElementById("version").innerHTML = device.version;
+      document.getElementById("uuid").innerHTML = device.uuid;
+    }
+    
+    function scan() {
+        window.plugins.barcodeScanner.scan(function(result) {
+                alert("We got a barcode\n" +
+                      "Result: " + result.text + "\n" +
+                      "Format: " + result.format); 
+            }, function(error) {
+                alert("Scanning failed: " + error);
+            });
+    }
+    
+    function encode(type, data) {
+        window.plugins.barcodeScanner.encode(type, data, function(result) {
+                alert("encode success: " + result);
+            }, function(error) {
+                alert("encoding failed: " + error);
+            });
+    }
+    
+  </script>
+  </head>
+  <body onload="init();" id="stage" class="theme">
+    <h1>Open Food Facts</h1>
+    <div id="info">
+      <h4>Platform: <span id="platform">&nbsp;</span></h4>
+      <h4>Version: <span id="version">&nbsp;</span></h4>
+      <h4>UUID:   <span id="uuid">&nbsp;</span></h4>
+    </div>
+    <a href="#" class="btn large" onclick="scan();">Scan</a>
+ </body>
+</html>
