@@ -151,6 +151,8 @@ function showProduct( urlObj, options )
 		// Load and display the product (from memory or from the server)
 		// http://fr.openfoodfacts.org/api/v0/product/2165244002857.json
 		
+		console.log("getting " + 'http://fr.openfoodfacts.org/api/v0/product/' + code + '.json');
+		
 		$.get('http://fr.openfoodfacts.org/api/v0/product/' + code + '.json',
 				 function(data) {
 				
