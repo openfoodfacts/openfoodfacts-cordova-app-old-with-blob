@@ -28,6 +28,8 @@
     <!-- <access origin="https://example.com" /> allow any secure requests to example.com -->
     <!-- <access origin="https://example.com" subdomains="true" /> such as above, but including subdomains, such as www -->
     <!-- <access origin=".*"/> Allow all domains, suggested development use only -->
+    <access origin="http://*.openfoodfacts.org" />
+    
 
     <log level="DEBUG"/>
     <preference name="useBrowserHistory" value="false" />

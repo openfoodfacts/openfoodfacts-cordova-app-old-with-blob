@@ -1,0 +1,10 @@
+.ui-icon-off-scan {
+	background-image: url("app-icon-scan.png");
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-off-scan {
+		background-image: url("app-icon-scan-highres.png");
+		background-size: 18px 18px;
+	}
+}

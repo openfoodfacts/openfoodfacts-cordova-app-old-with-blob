@@ -2,40 +2,48 @@
 <html>
 <head>
 <title>Open Food Facts</title>
-<meta name="viewport_notactive" content="width=320; user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
 <script type="text/javascript" charset="utf-8" src="cordova-2.0.0.js"></script>
-<script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>      
+<script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>   
+
+<link rel="stylesheet" href="off.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
+<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.js"></script>   
 
 <script type="text/javascript" charset="utf-8">
     
     function init(){
         console.log("GOT AN ONLOAD!!!")
-        document.addEventListener("touchmove", preventBehavior, false);
-        document.addEventListener("deviceready", deviceInfo, true);     
+        //document.addEventListener("touchmove", preventBehavior, false);
     }
     
     var preventBehavior = function(e) { 
       e.preventDefault(); 
     };
       
-    var deviceInfo = function(){      
-      console.log("In deviceInfo!");
-      document.getElementById("platform").innerHTML = device.platform;
-      document.getElementById("version").innerHTML = device.version;
-      document.getElementById("uuid").innerHTML = device.uuid;
-    }
     
     function scan() {
+    
+    	console.log("Scanning");    	
+    
         window.plugins.barcodeScanner.scan(function(result) {
+        		console.log("Got a barcode");
+        		console.log("Got a barcode: " + results.text + " format: " + result.format);
                 alert("We got a barcode\n" +
                       "Result: " + result.text + "\n" +
                       "Format: " + result.format); 
+                console.log("after alert");
+                $.mobile.changePage("#page_product");
             }, function(error) {
+                console.log("Got a barcode");
                 alert("Scanning failed: " + error);
             });
+            
+          console.log("Scanning -- done");
     }
     
     function encode(type, data) {
@@ -46,15 +54,150 @@
             });
     }
     
+    
+$( document ).bind( "mobileinit", function() {
+    // Make your jQuery Mobile framework configuration changes here!
+
+    $.mobile.allowCrossDomainPages = true;
+});
+
+
+// There is one product page for all products
+// Listen for any attempts to call changePage().
+$(document).bind( "pagebeforechange", function( e, data ) {
+
+	// We only want to handle changePage() calls where the caller is
+	// asking us to load a page by URL.
+	if ( typeof data.toPage === "string" ) {
+
+		// We are being asked to load a page by URL, but we only
+		// want to handle URLs that request the data for a specific
+		// product.
+		var u = $.mobile.path.parseUrl( data.toPage );
+		var	re = /^#page_product/;
+
+		if ( u.hash.search(re) !== -1 ) {
+
+			// We're being asked to display the items for a specific category.
+			// Call our internal method that builds the content for the category
+			// on the fly based on our in-memory category data structure.
+			showProduct( u, data.options );
+
+			// Make sure to tell changePage() we've handled this call so it doesn't
+			// have to do anything.
+			e.preventDefault();
+		}
+	}
+});
+
+
+// Load the data for a specific category, based on
+// the URL passed in. Generate markup for the items in the
+// category, inject it into an embedded page, and then make
+// that page the current active page.
+function showProduct( urlObj, options )
+{
+	var code = urlObj.hash.replace( /.*code=/, "" ),
+
+		// Get the object that represents the category we
+		// are interested in. Note, that at this point we could
+		// instead fire off an ajax request to fetch the data, but
+		// for the purposes of this sample, it's already in memory.
+		// category = categoryData[ categoryName ],
+
+		// The pages we use to display our content are already in
+		// the DOM. The id of the page we are going to write our
+		// content into is specified in the hash before the '?'.
+		pageSelector = urlObj.hash.replace( /\?.*$/, "" );
+
+
+		// Get the page we are going to dump our content into.
+		var $page = $( pageSelector ),
+
+			// Get the header for the page.
+			$header = $page.children( ":jqmData(role=header)" ),
+
+			// Get the content area element for the page.
+			$content = $page.children( ":jqmData(role=content)" ),
+
+			// The markup we are going to inject into the content
+			// area of the page.
+			markup = "<p>Code barre :" + code + "</p>";
+
+		// Find the h1 element in our header and inject the name of
+		// the category into it.
+		$header.find( "h1" ).html( "Produit " + code );
+
+		// Inject the category items markup into the content element.
+		$content.html( markup );
+
+		// Pages are lazily enhanced. We call page() on the page
+		// element to make sure it is always enhanced before we
+		// attempt to enhance the listview markup we just injected.
+		// Subsequent calls to page() are ignored since a page/widget
+		// can only be enhanced once.
+		$page.page();
+
+		// We don't want the data-url of the page we just modified
+		// to be the url that shows up in the browser's location field,
+		// so set the dataUrl option to the URL for the category
+		// we just loaded.
+		options.dataUrl = urlObj.href;
+
+		// Now call changePage() and tell it to switch to
+		// the page we just modified.
+		$.mobile.changePage( $page, options );
+		
+		// Load and display the product (from memory or from the server)
+		// http://fr.openfoodfacts.org/api/v0/product/2165244002857.json
+		
+		$.get('http://fr.openfoodfacts.org/api/v0/product/' + code + '.json',
+				 function(data) {
+				
+			if (data.status == 0) {
+				alert(data.status_verbose);
+			}
+			else {
+				alert("nok");
+			}
+		}, 'json');
+	
+}
+    
   </script>
   </head>
   <body onload="init();" id="stage" class="theme">
+  
+  <div data-role="page" id="page_home">
+
+	<div data-role="header">
     <h1>Open Food Facts</h1>
-    <div id="info">
-      <h4>Platform: <span id="platform">&nbsp;</span></h4>
-      <h4>Version: <span id="version">&nbsp;</span></h4>
-      <h4>UUID:   <span id="uuid">&nbsp;</span></h4>
+	</div><!-- /header -->
+
+	<div data-role="content">
+	<form action="form.php" method="post">
+	<label for="keywords">Trouver un produit par nom ou marque :</label>
+	<input type="search" id="keywords" name="keywords" value="" />
+	<input type="submit" value="Chercher" />
+	</form>
+	<p>Scanner le code barre d'un produit :</p>
+	<a href="#" data-role="button" data-icon="off-scan" onclick="scan();">Scanner</a>
+	</div><!-- /content -->
+
+  </div><!-- /page -->
+  
+  
+  <div data-role="page" id="page_product">
+  
+    <div data-role="header">
+    <h1>Produit</h1>
     </div>
-    <a href="#" class="btn large" onclick="scan();">Scan</a>
+    
+    <div data-role="content">
+    </div>
+    
+  </div>
+
+
  </body>
 </html>
