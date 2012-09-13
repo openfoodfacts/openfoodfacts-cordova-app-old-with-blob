@@ -62,43 +62,6 @@
   </intent-filter>
 </activity>
 
-<!-- ZXing Preferences (Settings) Activity -->
-<activity
-    android:name="com.google.zxing.client.android.PreferencesActivity"
-    android:exported="false" >
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-    </intent-filter>
-</activity>
-
-<!-- ZXing Sharing Activity -->
-<activity
-    android:name="com.google.zxing.client.android.share.ShareActivity"
-    android:exported="false" >
-    <intent-filter>
-        <action android:name="com.google.zxing.client.android.SHARE" />
-        <category android:name="android.intent.category.DEFAULT" />
-    </intent-filter>
-</activity>
-
-<!-- ZXing Help Activity -->
-<activity
-    android:name="com.google.zxing.client.android.HelpActivity"
-    android:exported="false" >
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.DEFAULT" />
-    </intent-filter>
-</activity>
-
-<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" 
-    android:label="@string/share_name">
-  <intent-filter>
-    <action android:name="com.phonegap.plugins.barcodescanner.ENCODE"/>
-    <category android:name="android.intent.category.DEFAULT"/>
-  </intent-filter>
-</activity>        
         
     </application>
 
