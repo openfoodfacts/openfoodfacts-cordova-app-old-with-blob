@@ -19,6 +19,21 @@
     function init(){
         console.log("GOT AN ONLOAD!!!")
         //document.addEventListener("touchmove", preventBehavior, false);
+        
+$('#search').submit(function() { // catch the form's submit event
+    $.mobile.changePage( "#page_search", {});
+    $.ajax({ // create an AJAX call...
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('method'), // GET or POST
+        url: $(this).attr('action'), // the file to call
+        success: function(data) { // on success..
+            $('#search_results').html(data.jqm); // update the DIV
+            $('#page_search').trigger("create");
+        }
+    });
+    return false; // cancel original event to prevent form submitting
+});        
+                
     }
     
     var preventBehavior = function(e) { 
@@ -33,13 +48,10 @@
         window.plugins.barcodeScanner.scan(function(result) {
         		console.log("Got a barcode");
         		console.log("Got a barcode: " + result.text + " format: " + result.format);
-                alert("We got a barcode\n" +
-                      "Result: " + result.text + "\n" +
-                      "Format: " + result.format); 
-                console.log("after alert");
-                $.mobile.changePage("#page_product");
+                // alert("We got a barcode\n" + "Result: " + result.text + "\n" + "Format: " + result.format); 
+                $.mobile.changePage("#page_product?code=" + result.text);
             }, function(error) {
-                console.log("Got a barcode");
+                console.log("Scanning failed: " + error);
                 alert("Scanning failed: " + error);
             });
             
@@ -59,6 +71,9 @@ $( document ).bind( "mobileinit", function() {
     // Make your jQuery Mobile framework configuration changes here!
 
     $.mobile.allowCrossDomainPages = true;
+    // following option does not seem to work, adding a back button manually instead
+     $.mobile.page.prototype.options.addBackBtn = true;
+
 });
 
 
@@ -126,23 +141,32 @@ function showProduct( urlObj, options )
 
 		// Find the h1 element in our header and inject the name of
 		// the category into it.
-		$header.find( "h1" ).html( "Produit " + code );
+		$header.find( "h1" ).html( 'Produit ' + code  );
+		
+		$page.attr("data-backbtn",true);
 
 		// Inject the category items markup into the content element.
 		$content.html( markup );
-
+		
+		$page.trigger( "create" );
+		
 		// Pages are lazily enhanced. We call page() on the page
 		// element to make sure it is always enhanced before we
 		// attempt to enhance the listview markup we just injected.
 		// Subsequent calls to page() are ignored since a page/widget
 		// can only be enhanced once.
 		$page.page();
+		
+		$page.live( 'swipeleft',function(event, ui){
+  			parent.history.back();
+        	return false;
+		});
 
 		// We don't want the data-url of the page we just modified
 		// to be the url that shows up in the browser's location field,
 		// so set the dataUrl option to the URL for the category
 		// we just loaded.
-		options.dataUrl = urlObj.href;
+		// options.dataUrl = urlObj.href;
 
 		// Now call changePage() and tell it to switch to
 		// the page we just modified.
@@ -151,20 +175,30 @@ function showProduct( urlObj, options )
 		// Load and display the product (from memory or from the server)
 		// http://fr.openfoodfacts.org/api/v0/product/2165244002857.json
 		
-		console.log("getting " + 'http://fr.openfoodfacts.org/api/v0/product/' + code + '.json');
+		console.log("getting " + 'http://fr.openfoodfacts.org/api/v0/product/' + code + '.jqm.json');
 		
-		$.get('http://fr.openfoodfacts.org/api/v0/product/' + code + '.json',
+		$.get('http://fr.openfoodfacts.org/api/v0/product/' + code + '.jqm.json',
 				 function(data) {
 				
-			if (data.status == 0) {
-				alert(data.status_verbose);
+			// alert("data.status: " + data.status + " data.jqm: " + data.jqm);
+			$content = $("#page_product").children( ":jqmData(role=content)" )
+			if (data.status == 1) {
+				$content.html (data.jqm);
+				$header.find( "h1" ).html( data.title  );		
+				$page.trigger( "create" );
 			}
 			else {
-				alert("nok");
+				//alert("nok data.status : " + data.status + " - verbose: " + data.status_verbose);
+				$content.html (data.jqm);
+				$page.trigger( "create" );
+				
 			}
 		}, 'json');
 	
 }
+
+
+
     
   </script>
   </head>
@@ -177,29 +211,41 @@ function showProduct( urlObj, options )
 	</div><!-- /header -->
 
 	<div data-role="content">
-	<form action="form.php" method="post">
-	<label for="keywords">Trouver un produit par nom ou marque :</label>
-	<input type="search" id="keywords" name="keywords" value="" />
+	<form id="search" name="search" action="http://fr.openfoodfacts.org/cgi/search.pl" method="post">
+	<label for="search_terms">Trouver un produit par nom ou marque :</label>
+	<input type="hidden" name="action" value="process" />
+	<input type="hidden" name="jqm" value="1" />
+	<input type="search" id="search_terms" name="search_terms" value="" />
 	<input type="submit" value="Chercher" />
 	</form>
 	<p>Scanner le code barre d'un produit :</p>
 	<a href="#" data-role="button" data-icon="off-scan" onclick="scan();">Scanner</a>
+	
+	
 	</div><!-- /content -->
 
   </div><!-- /page -->
   
   
   <div data-role="page" id="page_product">
-  
     <div data-role="header">
+    <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l">Retour</a>
     <h1>Produit</h1>
     </div>
     
     <div data-role="content">
     </div>
-    
   </div>
-
+  
+  <div data-role="page" id="page_search">
+    <div data-role="header">
+    <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l">Retour</a>
+    <h1>Recherche</h1>
+    </div>
+    
+    <div data-role="content" id="search_results">
+    </div>
+  </div>
 
  </body>
 </html>

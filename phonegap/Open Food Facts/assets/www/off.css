@@ -8,3 +8,180 @@
 		background-size: 18px 18px;
 	}
 }
+
+
+
+
+a { text-decoration: none;}
+
+a, a:visited { color: blue;}
+a:hover { text-decoration: underline; }
+
+
+hr.floatclear {
+background: none;
+border: 0;
+clear: both;
+display: block;
+float: none;
+font-size: 0;
+margin: 0;
+padding: 0;
+overflow: hidden;
+visibility: hidden;
+width: 0;
+height: 0;
+}
+
+hr.floatleft {
+background: none;
+border: 0;
+clear: left;
+display: block;
+float: none;
+font-size: 0;
+margin: 0;
+padding: 0;
+overflow: hidden;
+visibility: hidden;
+width: 0;
+height: 0;
+}
+
+hr.floatright {
+background: none;
+border: 0;
+clear: right;
+display: block;
+float: none;
+font-size: 0;
+margin: 0;
+padding: 0;
+overflow: hidden;
+visibility: hidden;
+width: 0;
+height: 0;
+}
+
+
+
+.data_table label, .data_table input { display: inline}
+.data_table input, .data_table select { font-size: 1em }
+.nutriment_label  { text-align: left; width: 300px; }
+.nutriment_value { text-align: right }
+.nutriment_subx { font-size: 0.9em;}
+.data_table .nutriment_sub .nutriment_label { padding-left:20px;}
+input.nutriment_value { width:50px;}
+thead, tbody { margin:0px; padding:0px; }
+
+
+.data_table { margin-top:20px; padding:0px; vertical-align:middle; border-collapse:collapse}
+.data_table td, .data_table th { margin:0px; padding-left:3px;padding-right:3px;}
+.data_table .nutriment_head { background-color: #8888ff; color: white; }
+.data_table .nutriment_main { border-top:3px solid white; background-color: #ddddff;}
+.data_table .nutriment_sub, .data_table .nutriment_sub td { border-top: 1px solid #ddddff; background-color: #eeeeff; }
+.ui-autocomplete li { font-size: 1em;}
+#nutriment_carbon-footprint_tr { background-color:#ddffdd }
+
+#inactive-content h1, h2, h3, h4 {
+	margin-top:20px;
+	margin-bottom:10px;
+	width:auto;
+	border-bottom:1px solid #ccc;
+	display:block;
+	clear:left;
+}
+
+ul.products {
+	list-style:none;
+	padding: 0;
+	margin: 0;	
+}
+
+.products li {
+	text-align:center;
+	display:block;
+	width:120px;;
+	height:150px;
+	padding:10px;
+	overflow:hidden;
+	margin:10px;
+	float:left;
+}
+
+.products div {
+	width:120px;
+	height:100px;
+	line-height:100px;
+	text-align:center;
+	padding:0px;
+	margin:0px;
+	display: table-cell;
+	vertical-align:middle;
+}
+
+.products img {
+	vertical-align:middle;
+}
+
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+}
+.fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -moz-transform: translate(-300px, 0) scale(4);
+  direction: ltr;
+  cursor: pointer;
+}
+
+#pages {
+	clear:left;
+}
+#pages div {margin-left:5px; display:inline;}
+#current_page {font-weight:bold;}
+#breadcrumbs {clear:both;padding-top:20px}
+#breadcrumbs div {display:inline}
+
+.additives_3, a.additives_3 {
+	color:red;
+}
+
+.additives_2, a.additives_2 {
+	color:darkorange;
+}
+
+.additives_1, a.additives_1 {
+	color:#ffbb00;
+}
+
+
+.image_box {
+	float:right;
+	border:1px solid grey;
+	background-color:#ffffff;
+	padding:10px;
+	text-align:center;
+	font-style:italic;
+	margin-left:20px;
+	margin-bottom:5px;
+}	
+
+.field_div {
+	display:inline;
+	float:left;
+	margin-right:30px;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.field {
+	font-weight:bold;
+}
