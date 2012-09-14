@@ -1,6 +1,7 @@
 package org.openfoodfacts.scanner;
 
 import android.os.Bundle;
+import android.webkit.CookieManager;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ public class MainActivity extends DroidGap {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	CookieManager.setAcceptFileSchemeCookies(true);
         super.onCreate(savedInstanceState);
         super.loadUrl("file:///android_asset/www/index.html");
     }

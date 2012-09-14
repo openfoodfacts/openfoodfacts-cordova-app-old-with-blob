@@ -13,14 +13,103 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
 <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.js"></script>   
-
 <script type="text/javascript" charset="utf-8">
+    
+var code;
+    
+
+function onDeviceReady() {
+    // Now safe to use the PhoneGap API
+    document.addEventListener("menubutton", onMenuKeyDown, false);
+}
+
+function onMenuKeyDown() {
+	$.mobile.changePage('#page_menu', {transition: 'pop', role: 'dialog'});
+}
+
+// Called when capture operation is finished
+//
+function captureSuccess(mediaFiles) {
+    var i, len;
+    for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+        uploadFile(mediaFiles[i]);
+    }       
+}
+
+// Called if something bad happens.
+// 
+function captureError(error) {
+    var msg = 'An error occurred during capture: ' + error.code;
+    navigator.notification.alert(msg, null, 'Erreur de prise de photo - ' + error.code);
+}
+
+// A button will call this function
+//
+function captureImage() {
+    // Launch device camera application, 
+    // allowing user to capture up to 2 images
+    navigator.device.capture.captureImage(captureSuccess, captureError, {limit: 1});
+}
+
+// Upload files to server
+function uploadFile(mediaFile) {
+    var ft = new FileTransfer(),
+        path = mediaFile.fullPath,
+        name = mediaFile.name;
+
+	console.log('Uploading image for product code: ' + code);
+	
+	var filename = name.replace(/\./, "_");
+	
+	$('#upload_image_result').append("<p id=\"uploading_" + filename + "\">"
+		+ '<img src="loading2.gif" style="margin-right:10px" />Envoi en cours</p>');
+		
+	var params = {code: code, imagefield: "front" };
+	if (window.localStorage.getItem("user_id")) {
+		params.user_id = window.localStorage.getItem("user_id");
+		params.password = window.localStorage.getItem("password");
+	}
+
+    ft.upload(path,
+        "http://fr.openfoodfacts.org/cgi/product_image_upload.pl",
+        function(result) {
+            console.log('Upload success: ' + result.responseCode);
+            console.log(result.bytesSent + ' bytes sent');
+            $('#upload_image_result').append("<p>Image reçue, merci !</p>");
+            $("#uploading_" + filename).remove();
+        },
+        function(error) {
+            console.log('Error uploading file ' + path + ': ' + error.code);
+            $('#upload_image_result').append("<p>Problème lors de l'envoi de l'image.</p>");
+            $("#uploading_" + filename).remove();
+        },
+        { fileKey: 'imgupload_front', fileName: name, params : params});   
+}
+    
+    
+function loadmore_click (e) {
+            	var href = $('#loadmorelink').attr("href");
+            	$('#loadmore').html('<img src="loading2.gif" style="margin:10px" />');
+			    $.getJSON(href, function(data) {
+			    	$('#loadmore').remove();
+			    	$('#search_results_list').append(data.jqm).listview('refresh');
+			    	$('#loadmore').bind('click', loadmore_click);
+			    	$('#loadmorelink').bind('click', loadmore_click);
+
+			    });
+			    e.preventDefault();
+			    return false;
+			}    
     
     function init(){
         console.log("GOT AN ONLOAD!!!")
         //document.addEventListener("touchmove", preventBehavior, false);
         
+        document.addEventListener("deviceready", onDeviceReady, false);
+        
 $('#search').submit(function() { // catch the form's submit event
+	$('#search_results').html('<div id="loading"><p>Recherche en cours</p>'
+				+ '<img src="loading2.gif" /></div>');
     $.mobile.changePage( "#page_search", {});
     $.ajax({ // create an AJAX call...
         data: $(this).serialize(), // get the form data
@@ -29,10 +118,57 @@ $('#search').submit(function() { // catch the form's submit event
         success: function(data) { // on success..
             $('#search_results').html(data.jqm); // update the DIV
             $('#page_search').trigger("create");
+            
+            $('#loadmore').bind('click', loadmore_click);
+			$('#loadmorelink').bind('click', loadmore_click);
+   
         }
     });
     return false; // cancel original event to prevent form submitting
-});        
+}); 
+
+
+$('[name=user_id]').change(function() {
+	$("#login_button").show();
+});
+$('[name=password]').change(function() {
+	$("#login_button").show();
+});
+
+
+   
+$('#login').submit(function() { // catch the form's submit event
+
+	$("#login_info").html('Connexion en cours');
+	$("#login_button").hide();
+
+    $.ajax({ // create an AJAX call...
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('method'), // GET or POST
+        url: $(this).attr('action'), // the file to call
+        success: function(data) { // on success..
+            
+            if (data.user_id) {
+            	window.localStorage.setItem("user_id", $('[name=user_id]').val());
+            	window.localStorage.setItem("password", $('[name=password]').val());
+            	$("#login_button").hide();
+            	$("#login_info").html("Bonjour " + data.name + " !");
+            }
+            else {
+            	window.localStorage.removeItem("password", $('[name=password]').val());
+            	$("#login_button").show();
+            	$("#login_info").html("Mauvais nom d'utilisateur ou mot de passe");
+            }
+   
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+        	alert('error : textStatus: ' + textStatus + ' errorThrown: ' + errorThrown);
+        }
+        
+    });
+    return false; // cancel original event to prevent form submitting
+}); 
+   
                 
     }
     
@@ -48,7 +184,8 @@ $('#search').submit(function() { // catch the form's submit event
         window.plugins.barcodeScanner.scan(function(result) {
         		console.log("Got a barcode");
         		console.log("Got a barcode: " + result.text + " format: " + result.format);
-                // alert("We got a barcode\n" + "Result: " + result.text + "\n" + "Format: " + result.format); 
+                // alert("We got a barcode\n" + "Result: " + result.text + "\n" + "Format: " + result.format);
+                code = result.text; 
                 $.mobile.changePage("#page_product?code=" + result.text);
             }, function(error) {
                 console.log("Scanning failed: " + error);
@@ -102,6 +239,20 @@ $(document).bind( "pagebeforechange", function( e, data ) {
 			// have to do anything.
 			e.preventDefault();
 		}
+		
+		
+		if (u.hash == '#page_menu') {
+			var user_id = $('[name=user_id]').val();
+			var password = $('[name=password]').val();
+			var user_id_local = window.localStorage.getItem("user_id");
+			var password_local = window.localStorage.getItem("password");
+			if ((user_id == '') && (user_id_local != '')) {
+				$('[name=user_id]').val(user_id_local);
+			}
+			if ((password == '') && (password_local != '')) {
+				$('[name=password]').val(password_local);
+			}
+		}
 	}
 });
 
@@ -137,7 +288,9 @@ function showProduct( urlObj, options )
 
 			// The markup we are going to inject into the content
 			// area of the page.
-			markup = "<p>Code barre :" + code + "</p>";
+			markup = "<p>Code barre : " + code + "</p>"
+				+ '<div id="loading"><p>Recherche du produit dans la base Open Food Facts en cours</p>'
+				+ '<img src="loading2.gif" /></div>';
 
 		// Find the h1 element in our header and inject the name of
 		// the category into it.
@@ -189,13 +342,14 @@ function showProduct( urlObj, options )
 			}
 			else {
 				//alert("nok data.status : " + data.status + " - verbose: " + data.status_verbose);
-				$content.html (data.jqm);
+				$("#loading").html (data.jqm);
 				$page.trigger( "create" );
 				
 			}
 		}, 'json');
 	
 }
+
 
 
 
@@ -208,6 +362,7 @@ function showProduct( urlObj, options )
 
 	<div data-role="header">
     <h1>Open Food Facts</h1>
+    <a href="#page_menu" data-rel="dialog" class="ui-btn-right">S'identifier</a>
 	</div><!-- /header -->
 
 	<div data-role="content">
@@ -220,12 +375,46 @@ function showProduct( urlObj, options )
 	</form>
 	<p>Scanner le code barre d'un produit :</p>
 	<a href="#" data-role="button" data-icon="off-scan" onclick="scan();">Scanner</a>
+
+	<br />
+	<div style="text-align:center">
+	<img src="openfoodfacts-logo-fr.png" alt="Open Food Facts" /><br />
+	<p><a href="http://fr.openfoodfacts.org">Open Food Facts</a> répertorie les produits alimentaires du monde entier
+	dans une base de données ouverte, libre et gratuite.</p>	
+	</div>
 	
 	
 	</div><!-- /content -->
 
   </div><!-- /page -->
   
+  <div data-role="page" id="page_menu">
+    <div data-role="header">
+    <h1>S'identifier</h1>
+    </div>
+        
+    <div data-role="content" data-inset="true">  
+<p>Connectez-vous pour ajouter des produits ou modifier leurs fiches.</p>
+
+<form id="login" name="login" method="post" action="http://fr.openfoodfacts.org/cgi/session.pl">
+Nom d'utilisateur ou adresse e-mail :<br>
+<input type="hidden" name="jqm" value="1" />
+<input name="user_id" tabindex="1" style="width:220px;" type="text">
+Mot de passe :<br>
+<input name="password" tabindex="2" style="width:220px;" type="password">
+
+<div id="login_info"></div>
+
+<div id="login_button">
+<input tabindex="3" role="button" name=".submit" value="Se connecter" type="submit">
+<p>Pas encore inscrit(e) ? <a href="/cgi/user.pl">Créez votre compte</a></p>	  
+</div>
+
+
+
+</form>
+    </div>
+  </div>
   
   <div data-role="page" id="page_product">
     <div data-role="header">
@@ -246,6 +435,8 @@ function showProduct( urlObj, options )
     <div data-role="content" id="search_results">
     </div>
   </div>
+
+<script type="text/javascript" src="retina.js"></script>
 
  </body>
 </html>
