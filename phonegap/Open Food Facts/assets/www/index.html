@@ -169,7 +169,7 @@ $('#login').submit(function() { // catch the form's submit event
     return false; // cancel original event to prevent form submitting
 }); 
    
-                
+   
     }
     
     var preventBehavior = function(e) { 
@@ -399,14 +399,14 @@ function showProduct( urlObj, options )
 <form id="login" name="login" method="post" action="http://fr.openfoodfacts.org/cgi/session.pl">
 Nom d'utilisateur ou adresse e-mail :<br>
 <input type="hidden" name="jqm" value="1" />
-<input name="user_id" tabindex="1" style="width:220px;" type="text">
+<input name="user_id" tabindex="1" type="text">
 Mot de passe :<br>
-<input name="password" tabindex="2" style="width:220px;" type="password">
+<input name="password" tabindex="2" type="password">
 
 <div id="login_info"></div>
 
 <div id="login_button">
-<input tabindex="3" role="button" name=".submit" value="Se connecter" type="submit">
+<input tabindex="3" role="button" value="Se connecter" type="submit">
 <p>Pas encore inscrit(e) ? <a href="/cgi/user.pl">Créez votre compte</a></p>	  
 </div>
 
@@ -436,7 +436,8 @@ Mot de passe :<br>
     </div>
   </div>
 
-<script type="text/javascript" src="retina.js"></script>
+
+<script src="retina.js" type="text/javascript"></script>
 
  </body>
 </html>
