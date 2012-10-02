@@ -16,7 +16,7 @@ The text of the MIT License is reproduced below.
 
 ### The MIT License
 
-Copyright (c) <2012> <Interesting Views SARL, Stéphane Gigandet, et. al., >
+Copyright (c) 2012 Interesting Views SARL, Stéphane Gigandet, et. al.,
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
