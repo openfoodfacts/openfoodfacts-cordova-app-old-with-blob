@@ -20,5 +20,7 @@ Pour découvrir le projet Open Food Facts, rendez vous sur http://fr.openfoodfac
 <gap:splash src="splash/ios/Default_iphone5.png" width="640" height="1136" />
 <gap:splash src="splash/ios/Default-Landscape.png" width="1024" height="768" />
 <gap:splash src="splash/ios/Default-Portrait.png" width="768" height="1024" />
-    
+
+<gap:plugin name="BarcodeScanner" /> <!-- latest release -->
+
 </widget>
