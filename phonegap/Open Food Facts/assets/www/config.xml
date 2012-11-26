@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <widget xmlns = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "org.openfoodfacts.scanner"
+        versionCode="2" 
+        version   = "1.0.1">
+
+    <!-- versionCode is optional and Android only -->
+
+    <name>Open Food Facts</name>
+
+    <description>Scannez le code barre des produits alimentaires pour obtenir les informations sur les ingrédients, additifs et la composition nutritionnelle.
+L'application permet de consulter les 3000 fiches produits déjà présentes dans la base de données libre et ouverte d'Open Food Facts, et également d'ajouter des photos pour les produits manquants.
+Pour découvrir le projet Open Food Facts, rendez vous sur http://fr.openfoodfacts.org</description>
+
+    <author href="https://fr.openfoodfacts.org" email="contact@openfoodfacts.org">Stéphane Gigandet</author>
+
+</widget>
