@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.openfoodfacts.scanner"
-    android:versionCode="2"
-    android:versionName="1.01" >
+    android:versionCode="3"
+    android:versionName="1.10" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="7"
         android:targetSdkVersion="15" />
         
 <supports-screens 
@@ -19,6 +19,13 @@
 <uses-permission android:name="android.permission.FLASHLIGHT" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+  <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
+  <uses-feature android:name="android.hardware.camera" android:required="false"/>
+  <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
+  <!-- TODO replace above two with next line after Android 4.2 -->
+  <!-- <uses-feature android:name="android.hardware.camera.any"/> -->
+  <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+  <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
 
     <application
         android:icon="@drawable/ic_launcher"

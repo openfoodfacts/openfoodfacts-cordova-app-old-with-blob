@@ -7,6 +7,7 @@
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
 <script src="phonegap.js"></script>
+<script type="text/javascript" src="cordova-2.0.0.js"></script>
 <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>   
 
 <link rel="stylesheet" href="off.css" />
@@ -60,9 +61,12 @@ function uploadFile(mediaFile) {
 	console.log('Uploading image for product code: ' + code);
 	
 	var filename = name.replace(/\./, "_");
+	var uploading = "uploading_" + filename;
 	
-	$('#upload_image_result').append("<p id=\"uploading_" + filename + "\">"
-		+ '<img src="loading2.gif" style="margin-right:10px" />Envoi en cours</p>');
+	if ($(uploading).length <= 0) {
+		$('#upload_image_result').append("<p id=\"" + uploading + "\"></p>");
+	}
+	$('#' + uploading).html('<img src="loading2.gif" style="margin-right:10px" />Envoi en cours');
 		
 	var params = {code: code, imagefield: "front" };
 	if (window.localStorage.getItem("user_id")) {
@@ -75,13 +79,14 @@ function uploadFile(mediaFile) {
         function(result) {
             console.log('Upload success: ' + result.responseCode);
             console.log(result.bytesSent + ' bytes sent');
-            $('#upload_image_result').append("<p>Image reçue, merci !</p>");
-            $("#uploading_" + filename).remove();
+            $('#' + uploading).html("<p>Image reçue, merci !</p>");
         },
         function(error) {
             console.log('Error uploading file ' + path + ': ' + error.code);
-            $('#upload_image_result').append("<p>Problème lors de l'envoi de l'image.</p>");
-            $("#uploading_" + filename).remove();
+            $('#' + uploading).html("<p>Problème lors de l'envoi de l'image.<input id=\"" + uploading + "_retry\" type=\"button\" value=\"Réessayer\"\" ></p>");
+            $('#' + uploading + "_retry").click(function() {
+  				uploadFile(mediaFile);
+			});
         },
         { fileKey: 'imgupload_front', fileName: name, params : params});   
 }
@@ -100,12 +105,37 @@ function loadmore_click (e) {
 			    e.preventDefault();
 			    return false;
 			}    
+			
+function show_login () {
+
+	var user_id = window.localStorage.getItem("user_id");
+	var password = window.localStorage.getItem("password");
+	var name = window.localStorage.getItem("name");
+	
+	if ((user_id != null) && (password != null)) {
+		$("#login_form").hide();
+        $("#login_button").hide();
+        $("#login_logout").show();
+        if (name != null) {
+        	$("#login_info").html("Bonjour " + name + " !");
+        }
+        $("#login_link").html("Déconnecter");     	
+    }
+	else {
+		$("#login_form").show();
+        $("#login_button").show();
+        $("#login_logout").hide();
+        $("#login_link").html("S'identifier");  		
+	}
+}			
     
-    function init(){
+    function init() {
         console.log("GOT AN ONLOAD!!!")
         //document.addEventListener("touchmove", preventBehavior, false);
         
         document.addEventListener("deviceready", onDeviceReady, false);
+        
+		show_login();
         
 $('#search').submit(function() { // catch the form's submit event
 	$('#search_results').html('<div id="loading"><p>Recherche en cours</p>'
@@ -136,6 +166,15 @@ $('[name=password]').change(function() {
 });
 
 
+
+
+$("#logout").bind( "click", function(event, ui) {
+     	window.localStorage.removeItem("password");
+       	window.localStorage.removeItem("name");  
+       	$("#login_info").html("");          	
+       	show_login();
+       	return false;
+});
    
 $('#login').submit(function() { // catch the form's submit event
 
@@ -151,18 +190,22 @@ $('#login').submit(function() { // catch the form's submit event
             if (data.user_id) {
             	window.localStorage.setItem("user_id", $('[name=user_id]').val());
             	window.localStorage.setItem("password", $('[name=password]').val());
-            	$("#login_button").hide();
-            	$("#login_info").html("Bonjour " + data.name + " !");
+            	window.localStorage.setItem("name", data.name);
             }
             else {
-            	window.localStorage.removeItem("password", $('[name=password]').val());
-            	$("#login_button").show();
+            	window.localStorage.removeItem("password");
+            	window.localStorage.removeItem("name");            	  	
             	$("#login_info").html("Mauvais nom d'utilisateur ou mot de passe");
             }
+            show_login();
    
         },
         error: function(jqXHR, textStatus, errorThrown) {
-        	alert('error : textStatus: ' + textStatus + ' errorThrown: ' + errorThrown);
+            window.localStorage.removeItem("password");
+            window.localStorage.removeItem("name");             
+            $("#login_info").html("Identification impossible : pas de réseau ?");
+            show_login();
+
         }
         
     });
@@ -362,7 +405,7 @@ function showProduct( urlObj, options )
 
 	<div data-role="header">
     <h1>Open Food Facts</h1>
-    <a href="#page_menu" data-rel="dialog" class="ui-btn-right">S'identifier</a>
+    <a href="#page_menu" data-rel="dialog" class="ui-btn-right" id="login_link" data-icon="gear">S'identifier</a>
 	</div><!-- /header -->
 
 	<div data-role="content">
@@ -394,6 +437,8 @@ function showProduct( urlObj, options )
     </div>
         
     <div data-role="content" data-inset="true">  
+    
+<div id="login_form">
 <p>Connectez-vous pour ajouter des produits ou modifier leurs fiches.</p>
 
 <form id="login" name="login" method="post" action="http://fr.openfoodfacts.org/cgi/session.pl">
@@ -403,16 +448,27 @@ Nom d'utilisateur ou adresse e-mail :<br>
 Mot de passe :<br>
 <input name="password" tabindex="2" type="password">
 
-<div id="login_info"></div>
-
 <div id="login_button">
 <input tabindex="3" role="button" value="Se connecter" type="submit">
 <p>Pas encore inscrit(e) ? <a href="/cgi/user.pl">Créez votre compte</a></p>	  
 </div>
 
-
-
 </form>
+</div>
+
+<div id="login_info"></div>
+
+<div id="login_logout">
+<br/>
+<a id="logout" href="#"  data-role="button">Se déconnecter</a>
+</div>
+
+<div id="login_close">
+<br/>
+<a href="#" data-rel="back" data-role="button">Fermer</a>
+</div>
+
+
     </div>
   </div>
   
