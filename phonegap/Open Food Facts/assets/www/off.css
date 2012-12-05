@@ -1,15 +1,20 @@
 .ui-icon-off-scan {
 	background-image: url("app-icon-scan.png");
 }
+.ui-icon-off-camera {
+	background-image: url("app-icon-camera.png");
+}
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-off-scan {
 		background-image: url("app-icon-scan-highres.png");
 		background-size: 18px 18px;
 	}
+	.ui-icon-off-camera {
+		background-image: url("app-icon-camera-highres.png");
+		background-size: 18px 18px;
+	}	
 }
-
-
 
 
 a { text-decoration: none;}
@@ -91,6 +96,7 @@ thead, tbody { margin:0px; padding:0px; }
 	display:block;
 	clear:left;
 }
+
 
 ul.products {
 	list-style:none;

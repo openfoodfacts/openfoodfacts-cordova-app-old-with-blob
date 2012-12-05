@@ -9,10 +9,11 @@
 <script src="phonegap.js"></script>
 <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>   
 
+<link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
 <link rel="stylesheet" href="off.css" />
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.css" />
-<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.2.0-alpha.1/jquery.mobile-1.2.0-alpha.1.min.js"></script>   
+
+<script src="jquery-1.8.2.min.js"></script>
+<script src="jquery.mobile-1.2.0.min.js"></script>   
 <script type="text/javascript" charset="utf-8">
     
 var code;
@@ -39,8 +40,8 @@ function captureSuccess(mediaFiles) {
 // Called if something bad happens.
 // 
 function captureError(error) {
-    var msg = 'An error occurred during capture: ' + error.code;
-    navigator.notification.alert(msg, null, 'Erreur de prise de photo - ' + error.code);
+    //var msg = 'An error occurred during capture: ' + error.code;
+    //navigator.notification.alert(msg, null, 'Erreur de prise de photo - ' + error.code);
 }
 
 // A button will call this function
@@ -118,16 +119,16 @@ function show_login () {
         if (name != null) {
         	$("#login_info").html("Bonjour " + name + " !");
         }
-        $("#login_link").html("Déconnecter");     	
+        $("#login_link").find('.ui-btn-text').text("Déconnecter");	
     }
 	else {
 		$("#login_form").show();
         $("#login_button").show();
         $("#login_logout").hide();
-        $("#login_link").html("S'identifier");  		
+        $("#login_link").find('.ui-btn-text').text("S'identifier");	
 	}
 }			
-    
+
     function init() {
         console.log("GOT AN ONLOAD!!!")
         //document.addEventListener("touchmove", preventBehavior, false);
@@ -217,7 +218,7 @@ $('#login').submit(function() { // catch the form's submit event
     var preventBehavior = function(e) { 
       e.preventDefault(); 
     };
-      
+
     
     function scan() {
     
@@ -402,9 +403,9 @@ function showProduct( urlObj, options )
   
   <div data-role="page" id="page_home">
 
-	<div data-role="header">
+	<div data-role="header" data-position="fixed">
     <h1>Open Food Facts</h1>
-    <a href="#page_menu" data-rel="dialog" class="ui-btn-right" id="login_link" data-icon="gear">S'identifier</a>
+    <a href="#page_menu" data-rel="dialog" class="ui-btn-right" id="login_link">S'identifier</a>
 	</div><!-- /header -->
 
 	<div data-role="content">
@@ -467,12 +468,11 @@ Mot de passe :<br>
 <a href="#" data-rel="back" data-role="button">Fermer</a>
 </div>
 
-
     </div>
   </div>
   
   <div data-role="page" id="page_product">
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
     <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l">Retour</a>
     <h1>Produit</h1>
     </div>
@@ -482,7 +482,7 @@ Mot de passe :<br>
   </div>
   
   <div data-role="page" id="page_search">
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
     <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l">Retour</a>
     <h1>Recherche</h1>
     </div>
