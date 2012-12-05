@@ -17,6 +17,10 @@
 }
 
 
+h1 {
+	margin-top:40px;
+}
+
 a { text-decoration: none;}
 
 a, a:visited { color: blue;}
