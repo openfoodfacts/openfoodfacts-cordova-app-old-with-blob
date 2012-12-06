@@ -23,4 +23,6 @@ Pour découvrir le projet Open Food Facts, rendez vous sur http://fr.openfoodfac
 
 <gap:plugin name="BarcodeScanner" /> <!-- latest release -->
 
+<preference name="orientation" value="default" />
+
 </widget>
