@@ -25,4 +25,7 @@ Pour découvrir le projet Open Food Facts, rendez vous sur http://fr.openfoodfac
 
 <preference name="orientation" value="default" />
 
+<preference name="phonegap-version" value="2.1.0" /> 
+
+
 </widget>
