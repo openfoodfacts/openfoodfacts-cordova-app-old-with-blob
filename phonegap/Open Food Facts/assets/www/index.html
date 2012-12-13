@@ -10,6 +10,7 @@
 <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>   
 
 <link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+<link href="ios_inspired/styles.css" rel="stylesheet" />
 <link rel="stylesheet" href="off.css" />
 
 <script src="jquery-1.8.2.min.js"></script>
@@ -229,7 +230,9 @@ $('#login').submit(function() { // catch the form's submit event
         		console.log("Got a barcode: " + result.text + " format: " + result.format);
                 // alert("We got a barcode\n" + "Result: " + result.text + "\n" + "Format: " + result.format);
                 code = result.text; 
-                $.mobile.changePage("#page_product?code=" + result.text);
+                if (code != '') {
+                	$.mobile.changePage("#page_product?code=" + result.text);
+                }
             }, function(error) {
                 console.log("Scanning failed: " + error);
                 alert("Scanning failed: " + error);
@@ -422,7 +425,7 @@ function showProduct( urlObj, options )
 	<br />
 	<div style="text-align:center">
 	<img src="openfoodfacts-logo-fr.png" alt="Open Food Facts" /><br />
-	<p><a href="http://fr.openfoodfacts.org">Open Food Facts</a> répertorie les produits alimentaires du monde entier
+	<p>Open Food Facts répertorie les produits alimentaires du monde entier
 	dans une base de données ouverte, libre et gratuite.</p>	
 	</div>
 	
@@ -450,7 +453,7 @@ Mot de passe :<br>
 
 <div id="login_button">
 <input tabindex="3" role="button" value="Se connecter" type="submit">
-<p>Pas encore inscrit(e) ? <a href="/cgi/user.pl">Créez votre compte</a></p>	  
+<p>Pas encore inscrit(e) ? <a href="http://fr.openfoodfacts.org/cgi/user.pl">Créez votre compte</a></p>	  
 </div>
 
 </form>
@@ -460,7 +463,7 @@ Mot de passe :<br>
 
 <div id="login_logout">
 <br/>
-<a id="logout" href="#"  data-role="button">Se déconnecter</a>
+<a id="logout" href="#" data-role="button">Se déconnecter</a>
 </div>
 
 <div id="login_close">
@@ -487,7 +490,6 @@ Mot de passe :<br>
     <h1>Recherche</h1>
     </div>
     
-    <h1>Recherche du produit</h1>
     <div data-role="content" id="search_results">
     </div>
   </div>

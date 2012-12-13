@@ -1,3 +1,7 @@
+.ui-page, .ui-mobile-viewport {
+	background: white url("images/background.png") repeat;
+}
+
 .ui-icon-off-scan {
 	background-image: url("app-icon-scan.png");
 }
@@ -18,13 +22,15 @@
 
 
 h1 {
-	margin-top:40px;
+	//margin-top:20px;
 }
 
-a { text-decoration: none;}
+.ui-content {
+	padding-top:40px;
+}
 
-a, a:visited { color: blue;}
-a:hover { text-decoration: underline; }
+
+a, a:visited, a:hover { text-decoration:none;}
 
 
 hr.floatclear {
