@@ -19,6 +19,7 @@ Pour découvrir le projet Open Food Facts, rendez vous sur http://fr.openfoodfac
 <icon src="icons/app-icon-57-fond-noir.png" width="57" height="57" /> 
 <icon src="icons/app-icon-72-fond-noir.png" gap:platform="ios" width="72" height="72" /> 
 <icon src="icons/app-icon-114-fond-noir" width="114" height="114" />     
+<icon src="icons/app-icon-144-fond-noir" width="144" height="144" />     
 
 <gap:splash src="splash/ios/Default.png" width="320" height="480" />
 <gap:splash src="splash/ios/Default_at_2x.png" width="640" height="960" />
