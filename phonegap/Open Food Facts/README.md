@@ -4,8 +4,9 @@ This app allows to scan products, to see the corresponding product data from htt
 
 ## Supported systems ##
 
-The app builds and runs on Android phones. It is however developed with Phonegap / Cordova, a platform that allows mobile apps to be coded in HTML and Javascript, and to be built and deployed
-to multiple systems. It should therefore be possible to easily adapt it to run on other systems such as iOS and Blackberry. The application requires the "BarcodeScanner" Phonegap plugin
+The app builds and runs on Android and iOS phones and tablets. It is however developed with Phonegap / Cordova, a platform that allows mobile apps to be coded in HTML and Javascript, and to be built and deployed
+to multiple systems. It should therefore be possible to easily adapt it to run on other systems such as 
+Blackberry and Windows Phone. The application requires the "BarcodeScanner" Phonegap plugin
 which currently exists for Android, iOS and Blackberry.
 
 ## LICENSE ##
