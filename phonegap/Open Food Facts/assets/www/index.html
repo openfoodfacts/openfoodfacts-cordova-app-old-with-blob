@@ -1,12 +1,13 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+
 <title>Open Food Facts</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
 
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
-<script src="phonegap.js"></script>
+<script src="cordova-2.5.0.js"></script>
 <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>   
 
 <link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
@@ -15,10 +16,100 @@
 
 <script src="jquery-1.8.2.min.js"></script>
 <script src="jquery.mobile-1.2.0.min.js"></script>   
+
+<script src="jquery.i18n.js"></script>
+<script src="jquery.i18n.messages.js"></script>
+<script src="jquery.i18n.fallbacks.js"></script>
+<script src="jquery.i18n.parser.js"></script>
+<script src="jquery.i18n.emitter.js"></script>
+<script src="jquery.i18n.language.js"></script>
+
+<!-- i18n -->
+<link rel="localization" hreflang="en" href="i18n-en.json" type="application/l10n+json"/>
+<link rel="localization" hreflang="es" href="i18n-es.json" type="application/l10n+json"/>
+<link rel="localization" hreflang="fr" href="i18n-fr.json" type="application/l10n+json"/>
+<link rel="localization" hreflang="it" href="i18n-it.json" type="application/l10n+json"/>
+<link rel="localization" hreflang="de" href="i18n-de.json" type="application/l10n+json"/>
+<link rel="localization" hreflang="ar" href="i18n-ar.json" type="application/l10n+json"/>
+
+
 <script type="text/javascript" charset="utf-8">
     
-var code;
+var lc = 'en';
+
+var supported_languages = {
+'ar':'العربية',
+'de':'Deutsch',
+'es':'Español',
+'en':'English',
+'it':'Italiano',
+'fr':'Français',
+'nl':'Nederlands',
+'ru':'Русский',
+'pl':'Polski',
+'pt':'Português',
+'vi':'Tiếng Việt',
+'zh':'中文',
+}
     
+var code;
+
+function update_language() {
+
+	$('#language').val(lc);
+
+	$("form").each(function () {
+		var action = $(this).attr("action");
+		if (action) {
+			$(this).attr("action", action.replace(/\/(..)\.openfoodfacts\.org/, '/' + lc + '.openfoodfacts.org'));
+		}
+		});
+		
+	$(".i18n").i18n();
+	
+	show_login();
+}
+
+
+jQuery( document ).ready( function ( $ ) {
+
+	$.each(supported_languages, function (index,value) {
+			$("#language").append('<option value=' + index + '>' + value + '</option>');
+		}
+	);
+
+	function update_language_value() {
+
+		lc = $('#language option:selected').val();
+		i18n.locale = lc;
+		window.localStorage.setItem("lc", lc);
+		
+		update_language();
+	}
+
+	$( '#language').on( 'change keyup', update_language_value );
+
+	$.i18n.debug = true;
+	var i18n = $.i18n();		
+	
+	var locale = i18n.locale.replace(/_|-(.*)$/g,'');
+		
+	if (supported_languages[locale]) {
+		lc = locale;
+	}
+	else {
+		lc = 'en';
+	}
+	
+	if (window.localStorage.getItem("lc")) {
+		lc = window.localStorage.getItem("lc");
+		i18n.locale = lc;
+	}
+	
+	update_language();
+	
+} );
+
 
 function onDeviceReady() {
     // Now safe to use the PhoneGap API
@@ -26,7 +117,7 @@ function onDeviceReady() {
 }
 
 function onMenuKeyDown() {
-	$.mobile.changePage('#page_menu', {transition: 'pop', role: 'dialog'});
+	$.mobile.changePage('#page_parameters', {transition: 'pop', role: 'dialog'});
 }
 
 // Called when capture operation is finished
@@ -67,7 +158,7 @@ function uploadFile(mediaFile) {
 	if ($(uploading).length <= 0) {
 		$('#upload_image_result').append("<p id=\"" + uploading + "\"></p>");
 	}
-	$('#' + uploading).html('<img src="loading2.gif" style="margin-right:10px" />Envoi en cours');
+	$('#' + uploading).html('<img src="loading2.gif" style="margin-right:10px" />' + $.i18n("msg_uploading"));
 		
 	var params = {code: code, imagefield: "front" };
 	if (window.localStorage.getItem("user_id")) {
@@ -76,15 +167,15 @@ function uploadFile(mediaFile) {
 	}
 
     ft.upload(path,
-        "http://fr.openfoodfacts.org/cgi/product_image_upload.pl",
+        "http://" + lc + ".openfoodfacts.org/cgi/product_image_upload.pl",
         function(result) {
             console.log('Upload success: ' + result.responseCode);
             console.log(result.bytesSent + ' bytes sent');
-            $('#' + uploading).html("<p>Image reçue, merci !</p>");
+            $('#' + uploading).html("<p>" + $.i18n("msg_uploaded") + "</p>");
         },
         function(error) {
             console.log('Error uploading file ' + path + ': ' + error.code);
-            $('#' + uploading).html("<p>Problème lors de l'envoi de l'image.<input id=\"" + uploading + "_retry\" type=\"button\" value=\"Réessayer\"\" ></p>");
+            $('#' + uploading).html("<p>" + $.i18n("msg_upload_problem") + "<input id=\"" + uploading + "_retry\" type=\"button\" value=\"" + $.i18n("msg_upload_retry") + "\"\" ></p>");
             $('#' + uploading + "_retry").click(function() {
   				uploadFile(mediaFile);
 			});
@@ -118,15 +209,15 @@ function show_login () {
         $("#login_button").hide();
         $("#login_logout").show();
         if (name != null) {
-        	$("#login_info").html("Bonjour " + name + " !");
+        	$("#login_info").html($.i18n("msg_hello",name));
         }
-        $("#login_link").find('.ui-btn-text').text("Déconnecter");	
+        $("#login_link").find('.ui-btn-text').text($.i18n("msg_logout"));	
     }
 	else {
 		$("#login_form").show();
         $("#login_button").show();
         $("#login_logout").hide();
-        $("#login_link").find('.ui-btn-text').text("S'identifier");	
+        $("#login_link").find('.ui-btn-text').text($.i18n("msg_login"));	
 	}
 }			
 
@@ -135,11 +226,9 @@ function show_login () {
         //document.addEventListener("touchmove", preventBehavior, false);
         
         document.addEventListener("deviceready", onDeviceReady, false);
-        
-		show_login();
-        
+                
 $('#search').submit(function() { // catch the form's submit event
-	$('#search_results').html('<div id="loading"><p>Recherche en cours</p>'
+	$('#search_results').html('<div id="loading"><p>' + $.i18n("msg_search_in_progress") + '</p>'
 				+ '<img src="loading2.gif" /></div>');
     $.mobile.changePage( "#page_search", {});
     $.ajax({ // create an AJAX call...
@@ -179,7 +268,7 @@ $("#logout").bind( "click", function(event, ui) {
    
 $('#login').submit(function() { // catch the form's submit event
 
-	$("#login_info").html('Connexion en cours');
+	$("#login_info").html($.i18n("msg_connecting"));
 	$("#login_button").hide();
 
     $.ajax({ // create an AJAX call...
@@ -196,7 +285,7 @@ $('#login').submit(function() { // catch the form's submit event
             else {
             	window.localStorage.removeItem("password");
             	window.localStorage.removeItem("name");            	  	
-            	$("#login_info").html("Mauvais nom d'utilisateur ou mot de passe");
+            	$("#login_info").html($.i18n("msg_connecting_bad_password"));
             }
             show_login();
    
@@ -204,7 +293,7 @@ $('#login').submit(function() { // catch the form's submit event
         error: function(jqXHR, textStatus, errorThrown) {
             window.localStorage.removeItem("password");
             window.localStorage.removeItem("name");             
-            $("#login_info").html("Identification impossible : pas de réseau ?");
+            $("#login_info").html($.i18n("msg_connecting_failed"));
             show_login();
 
         }
@@ -334,13 +423,13 @@ function showProduct( urlObj, options )
 
 			// The markup we are going to inject into the content
 			// area of the page.
-			markup = "<p>Code barre : " + code + "</p>"
-				+ '<div id="loading"><p>Recherche du produit dans la base Open Food Facts en cours</p>'
+			markup = "<p>" +  $.i18n("msg_barcode", code) + "</p>"
+				+ '<div id="loading"><p>' + $.i18n("msg_loading_product") + '</p>'
 				+ '<img src="loading2.gif" /></div>';
 
 		// Find the h1 element in our header and inject the name of
 		// the category into it.
-		$header.find( "h1" ).html( 'Produit ' + code  );
+		$header.find( "h1" ).html(  $.i18n("msg_product_title", code) );
 		
 		$page.attr("data-backbtn",true);
 
@@ -376,7 +465,7 @@ function showProduct( urlObj, options )
 		
 		console.log("getting " + 'http://fr.openfoodfacts.org/api/v0/product/' + code + '.jqm.json');
 		
-		$.get('http://fr.openfoodfacts.org/api/v0/product/' + code + '.jqm.json',
+		$.get('http://' + lc + '.openfoodfacts.org/api/v0/product/' + code + '.jqm.json',
 				 function(data) {
 				
 			// alert("data.status: " + data.status + " data.jqm: " + data.jqm);
@@ -407,26 +496,26 @@ function showProduct( urlObj, options )
   <div data-role="page" id="page_home">
 
 	<div data-role="header" data-position="fixed">
+	<a href="#page_parameters" data-rel="dialog" class="ui-btn-left" data-icon="gear" id="parameters_link" data-iconpos="notext"></a>
     <h1>Open Food Facts</h1>
-    <a href="#page_menu" data-rel="dialog" class="ui-btn-right" id="login_link">S'identifier</a>
+    <a href="#page_menu" data-rel="dialog" class="ui-btn-right" id="login_link">Sign-in</a>
 	</div><!-- /header -->
 
 	<div data-role="content">
-	<form id="search" name="search" action="http://fr.openfoodfacts.org/cgi/search.pl" method="post">
-	<label for="search_terms">Trouver un produit par nom ou marque :</label>
+	<form id="search" name="search" action="http://en.openfoodfacts.org/cgi/search.pl" method="post">
+	<label for="search_terms" class="i18n" data-i18n="msg_search">Search a product by name or brand:</label>
 	<input type="hidden" name="action" value="process" />
 	<input type="hidden" name="jqm" value="1" />
 	<input type="search" id="search_terms" name="search_terms" value="" />
-	<input type="submit" value="Chercher" />
+	<a href="#" data-role="button" onclick="$('#search').submit();" class="i18n" data-i18n="msg_search_button">Search</a>
 	</form>
-	<p>Scanner le code barre d'un produit :</p>
-	<a href="#" data-role="button" data-icon="off-scan" onclick="scan();">Scanner</a>
+	<p class="i18n" data-i18n="msg_scan_product">Scan a product barcode:</p>
+	<a href="#" data-role="button" data-icon="off-scan" onclick="scan();" class="i18n" data-i18n="msg_scan">Scan</a>
 
 	<br />
 	<div style="text-align:center">
-	<img src="openfoodfacts-logo-fr.png" alt="Open Food Facts" /><br />
-	<p>Open Food Facts répertorie les produits alimentaires du monde entier
-	dans une base de données ouverte, libre et gratuite.</p>	
+	
+	<p class="i18n" data-i18n="msg_description"></p>	
 	</div>
 	
 	
@@ -436,24 +525,24 @@ function showProduct( urlObj, options )
   
   <div data-role="page" id="page_menu">
     <div data-role="header">
-    <h1>S'identifier</h1>
+    <h1 class="i18n" data-i18n="msg_login">Sign-in</h1>
     </div>
         
     <div data-role="content" data-inset="true">  
     
 <div id="login_form">
-<p>Connectez-vous pour ajouter des produits ou modifier leurs fiches.</p>
+<p class="i18n" data-i18n="msg_please_login"></p>
 
-<form id="login" name="login" method="post" action="http://fr.openfoodfacts.org/cgi/session.pl">
-Nom d'utilisateur ou adresse e-mail :<br>
+<form id="login" name="login" method="post" action="http://en.openfoodfacts.org/cgi/session.pl">
+<label for="user_id" class="i18n" data-i18n="msg_userid">Username or e-mail address:</label><br/>
 <input type="hidden" name="jqm" value="1" />
 <input name="user_id" tabindex="1" type="text">
-Mot de passe :<br>
+<label for="password" class="i18n" data-i18n="msg_password">Password:</label><br/>
 <input name="password" tabindex="2" type="password">
 
 <div id="login_button">
-<input tabindex="3" role="button" value="Se connecter" type="submit">
-<p>Pas encore inscrit(e) ? <a href="http://fr.openfoodfacts.org/cgi/user.pl">Créez votre compte</a></p>	  
+<a href="#" data-role="button" onclick="$('#login').submit();" class="i18n" data-i18n="msg_login">Sign-in</a>
+<p class="i18n" data-i18n="msg_register">No account yet? <a href="http://en.openfoodfacts.org/cgi/user.pl" target="_blank">Create an account</a></p>	  
 </div>
 
 </form>
@@ -463,20 +552,45 @@ Mot de passe :<br>
 
 <div id="login_logout">
 <br/>
-<a id="logout" href="#" data-role="button">Se déconnecter</a>
+<a id="logout" href="#" data-role="button" class="i18n" data-i18n="msg_logout">Sign-out</a>
 </div>
 
 <div id="login_close">
 <br/>
-<a href="#" data-rel="back" data-role="button">Fermer</a>
+<a href="#" data-rel="back" data-role="button" class="i18n" data-i18n="msg_close">Close</a>
 </div>
 
     </div>
   </div>
   
+  <div data-role="page" id="page_parameters">
+    <div data-role="header">
+    <h1 class="i18n" data-i18n="msg_parameters">Parameters</h1>
+    </div>
+        
+    <div data-role="content" data-inset="true">  
+    
+<div id="parameters_form">
+<p class="i18n" data-i18n="msg_language"></p>
+
+<form id="parameters" name="parameters">
+<select id="language" name="language">
+</select>
+</form>
+
+<p class="i18n" data-i18n="msg_language_info"></p>
+<br/>
+<a href="#" data-rel="back" data-role="button" class="i18n" data-i18n="msg_close">Close</a>
+
+</div>
+
+    </div>
+  </div>  
+  
+  
   <div data-role="page" id="page_product">
     <div data-role="header" data-position="fixed">
-    <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l">Retour</a>
+    <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l" class="i18n" data-i18n="msg_back">Back</a>
     <h1>Produit</h1>
     </div>
     
@@ -486,8 +600,8 @@ Mot de passe :<br>
   
   <div data-role="page" id="page_search">
     <div data-role="header" data-position="fixed">
-    <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l">Retour</a>
-    <h1>Recherche</h1>
+    <a id="backbutton" href="#" data-rel="back" data-icon="arrow-l" class="i18n" data-i18n="msg_back">Back</a>
+    <h1 class="i18n" data-i18n="msg_search_title">Search</h1>
     </div>
     
     <div data-role="content" id="search_results">
