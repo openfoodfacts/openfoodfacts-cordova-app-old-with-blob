@@ -37,9 +37,7 @@
     <log level="DEBUG"/>
     <preference name="useBrowserHistory" value="true" />
     <preference name="exit-on-suspend" value="false" />
-    
-	<preference name="phonegap-version" value="2.3.0" />    
-    
+        
 <plugins>
     <plugin name="App" value="org.apache.cordova.App"/>
     <plugin name="Geolocation" value="org.apache.cordova.GeoBroker"/>
