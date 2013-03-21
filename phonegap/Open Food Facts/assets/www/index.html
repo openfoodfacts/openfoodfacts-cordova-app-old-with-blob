@@ -7,8 +7,9 @@
 
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
-<script src="cordova-2.5.0.js"></script>
+<script src="notneededforphonegapbuild_cordova-2.5.0.js"></script>
 <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>   
+
 
 <link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
 <link href="ios_inspired/styles.css" rel="stylesheet" />
@@ -320,8 +321,15 @@ $('#login').submit(function() { // catch the form's submit event
     
     	console.log("Scanning");    	
     	
-    	// var scanner =  window.plugins.barcodeScanner;
-    	var scanner = window.PhoneGap.require("cordova/plugin/BarcodeScanner");    	
+    	alert('scan');
+    	
+    	var scanner =  window.plugins.barcodeScanner;
+    	
+    	alert(scanner);
+    	
+    	var scanner = window.PhoneGap.require("cordova/plugin/BarcodeScanner");
+    	
+    	alert(scanner);    	
     
       	scanner.scan(function(result) {
         		console.log("Got a barcode");
