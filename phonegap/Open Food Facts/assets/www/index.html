@@ -54,6 +54,8 @@ var supported_languages = {
     
 var code;
 
+var uploads_in_progress = 0;
+
 function update_language() {
 
 	$('#language').val(lc);
@@ -166,14 +168,18 @@ function uploadFile(mediaFile) {
 		params.password = window.localStorage.getItem("password");
 	}
 
+	uploads_in_progress++;
+
     ft.upload(path,
         "http://" + lc + ".openfoodfacts.org/cgi/product_image_upload.pl",
         function(result) {
+        	uploads_in_progress--;
             console.log('Upload success: ' + result.responseCode);
             console.log(result.bytesSent + ' bytes sent');
-            $('#' + uploading).html("<p>" + $.i18n("msg_uploaded") + "</p>");
+            $('#' + uploading).html("<p>" + $.i18n("msg_uploaded") + "</p>");        
         },
         function(error) {
+        	uploads_in_progress--;
             console.log('Error uploading file ' + path + ': ' + error.code);
             $('#' + uploading).html("<p>" + $.i18n("msg_upload_problem") + "<input id=\"" + uploading + "_retry\" type=\"button\" value=\"" + $.i18n("msg_upload_retry") + "\"\" ></p>");
             $('#' + uploading + "_retry").click(function() {
@@ -313,8 +319,11 @@ $('#login').submit(function() { // catch the form's submit event
     function scan() {
     
     	console.log("Scanning");    	
+    	
+    	// var scanner =  window.plugins.barcodeScanner;
+    	var scanner = window.PhoneGap.require("cordova/plugin/BarcodeScanner");    	
     
-        window.plugins.barcodeScanner.scan(function(result) {
+      	scanner.scan(function(result) {
         		console.log("Got a barcode");
         		console.log("Got a barcode: " + result.text + " format: " + result.format);
                 // alert("We got a barcode\n" + "Result: " + result.text + "\n" + "Format: " + result.format);
@@ -449,6 +458,15 @@ function showProduct( urlObj, options )
   			parent.history.back();
         	return false;
 		});
+		
+		// Display confirmation dialog if there are uploads in progress and the used is clicking back
+		// Update: not working, but not needed? the image upload seems to continue even if the page changes
+		//$page.bind( "pagebeforechange", function( e, data ) {
+		//	if(!confirm("Images en cours d'envoi, êtes-vous sûr de vouloir quitter la page ? Les images ne seront pas envoyées.")) {
+		//		e.preventDefault();
+		//		return false;				
+		//    }
+		//});		
 
 		// We don't want the data-url of the page we just modified
 		// to be the url that shows up in the browser's location field,
@@ -465,7 +483,7 @@ function showProduct( urlObj, options )
 		
 		console.log("getting " + 'http://fr.openfoodfacts.org/api/v0/product/' + code + '.jqm.json');
 		
-		$.get('http://' + lc + '.openfoodfacts.org/api/v0/product/' + code + '.jqm.json',
+		$.get('http://' + lc + '.openfoodfacts.org/api/v0.1/product/' + code + '.jqm.json',
 				 function(data) {
 				
 			// alert("data.status: " + data.status + " data.jqm: " + data.jqm);
