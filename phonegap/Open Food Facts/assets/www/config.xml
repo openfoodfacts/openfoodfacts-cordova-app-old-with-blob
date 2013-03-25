@@ -2,8 +2,8 @@
     <widget xmlns = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "org.openfoodfacts.scanner"
-        versionCode="7" 
-        version   = "1.22">
+        versionCode="8" 
+        version   = "1.3">
 
     <!-- versionCode is optional and Android only -->
 
@@ -29,6 +29,6 @@ Pour découvrir le projet Open Food Facts, rendez vous sur http://fr.openfoodfac
 
 <gap:plugin name="BarcodeScanner" /> <!-- latest release -->
 
-<preference name="phonegap-version" value="2.3.0" />
+<preference name="phonegap-version" value="2.1.0" />
 
 </widget>
