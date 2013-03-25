@@ -191,6 +191,12 @@ function uploadFile(mediaFile) {
 }
     
     
+
+	
+
+
+    
+    
 function loadmore_click (e) {
             	var href = $('#loadmorelink').attr("href");
             	$('#loadmore').html('<img src="loading2.gif" style="margin:10px" />');
@@ -320,17 +326,9 @@ $('#login').submit(function() { // catch the form's submit event
     function scan() {
     
     	console.log("Scanning");    	
-    	
-    	alert('scan');
-    	
-    	var scanner =  window.plugins.barcodeScanner;
-    	
-    	alert(scanner);
-    	
-    	var scanner = window.PhoneGap.require("cordova/plugin/BarcodeScanner");
-    	
-    	alert(scanner);    	
-    
+    	    	
+    	var scanner =  window.plugins.barcodeScanner;	
+    	    
       	scanner.scan(function(result) {
         		console.log("Got a barcode");
         		console.log("Got a barcode: " + result.text + " format: " + result.format);
@@ -507,12 +505,50 @@ function showProduct( urlObj, options )
 				$page.trigger( "create" );
 				
 			}
+			
+			
+			$("#product_fields").submit(function() {
+
+				console.log("product_fields submit");
+
+				var params = {code: code };
+				if (window.localStorage.getItem("user_id")) {
+					params.user_id = window.localStorage.getItem("user_id");
+					params.password = window.localStorage.getItem("password");
+				}
+				
+			    var url = "http://" + lc + ".openfoodfacts.org/cgi/product_jqm.pl" ; // the script where you handle the form input.
+			    
+			    $("#save").button("disable").button("refresh");
+			    $("#saving").show();
+			    $("#saved").hide();
+			    $("#not_saved").hide();
+			
+			    $.ajax({
+			           type: "POST",
+			           url: url,
+			           data: $("#product_fields").serialize()  + '&' + $.param(params), // serializes the form's elements.
+			           success: function(data)
+			           {
+			               $("#saved").show();
+			           },
+			           error: function(textStatus, errorThrown)
+			           {
+			    			$("#not_saved").show();
+			           },
+			           complete: function() {
+			          		    $("#save").button("enable").button("refresh");
+			          		    $("#saving").hide();
+			           }
+			         });
+			
+				console.log("product_fields return false");
+			  	return false;
+			});
+			
 		}, 'json');
 	
 }
-
-
-
 
     
   </script>
