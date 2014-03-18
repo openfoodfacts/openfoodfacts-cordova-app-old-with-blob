@@ -1,8 +1,0 @@
-<resources>
-
-    <string name="app_name">Open Food Facts</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Paramètres</string>
-    <string name="title_activity_main">Open Food Facts</string>
-
-</resources>

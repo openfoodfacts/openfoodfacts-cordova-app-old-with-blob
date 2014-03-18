@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">Open Food Facts</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="share_name">Share</string>
+    <string name="title_activity_main">Open Food Facts</string>
+
+</resources>
