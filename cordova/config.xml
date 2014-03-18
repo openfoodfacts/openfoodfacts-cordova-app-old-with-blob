@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="org.openfoodfacts.scanner" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Open Food Facts</name>
+    <description>
+        An app to help create a database about food
+    </description>
+    <author email="" href="https://github.com/openfoodfacts/openfoodfacts-android">
+        Open Food Facts Team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>
