@@ -3,7 +3,7 @@ openfoodfacts-android
 
 Open Food Facts Android app
 
-*** Work in progress ***
+# Work in progress
 
 An application to:
 
@@ -11,6 +11,6 @@ An application to:
 
 2. add products to the Open Food Facts database
 
-*** API ***
+# API
 
 1. JSON: http://fr.openfoodfacts.org/api/v0/product/2165244002857.json
