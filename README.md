@@ -12,6 +12,7 @@ An application to:
 2. add products to the Open Food Facts database
 
 *** This version does not contain proprietary blobs ***
+
 *** API ***
 
 1. JSON: http://fr.openfoodfacts.org/api/v0/product/2165244002857.json
