@@ -485,9 +485,9 @@ function showProduct( urlObj, options )
 		$.mobile.changePage( $page, options );
 		
 		// Load and display the product (from memory or from the server)
-		// http://fr.openfoodfacts.org/api/v0/product/2165244002857.json
+		// http://<LC>.openfoodfacts.org/api/v0/product/2165244002857.json
 		
-		console.log("getting " + 'http://fr.openfoodfacts.org/api/v0/product/' + code + '.jqm.json');
+		console.log("getting " + 'http://' + lc + '.openfoodfacts.org/api/v0.1/product/' + code + '.jqm.json');
 		
 		$.get('http://' + lc + '.openfoodfacts.org/api/v0.1/product/' + code + '.jqm.json',
 				 function(data) {
