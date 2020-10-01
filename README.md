@@ -3,7 +3,7 @@ openfoodfacts-android
 
 Open Food Facts Android app
 
-*** Work in progress ***
+*****welcome openfoodfacts service*****
 
 An application to:
 
