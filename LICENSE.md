@@ -8,6 +8,8 @@ The text of the MIT License is reproduced below.
 
 Copyright (c) 2012 Interesting Views SARL, Stéphane Gigandet, et. al.,
 
+Obtaining copyright permission is the process of getting consent from a copyright owner to use the owner's creative material. Obtaining permission is often called “licensing”; when you have permission, you have a license to use the work.
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
